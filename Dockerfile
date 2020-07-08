@@ -28,10 +28,6 @@ RUN mkdir -p /var/wiremock/lib/ \
     -O /var/wiremock/lib/wiremock-jre8-standalone.jar
 
 RUN apt-get -y update && apt-get -y install procps
-# Install Supervisor
-RUN apt-get -y update && apt-get -y install supervisor
-COPY supervisord.conf /etc/supervisor/conf.d/
-
 
 WORKDIR /home/wiremock
 
@@ -39,8 +35,10 @@ COPY docker-entrypoint.sh /
 
 RUN mkdir -p /usr/src/app/metricscollector/
 COPY metricscollector/ /usr/src/app/metricscollector/
+RUN chmod +x /usr/src/app/metricscollector/
 
 VOLUME /home/wiremock
 EXPOSE 8080 8443
 
-CMD ["/usr/bin/supervisord"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD java $JAVA_OPTS -cp /var/wiremock/lib/*:/var/wiremock/extensions/* com.github.tomakehurst.wiremock.standalone.WireMockServerRunner
