@@ -15,4 +15,5 @@ if [ "$uid" != "" ]; then
 	set -- gosu $uid:$uid "$@"
 fi
 
-exec "$@" & java -jar /usr/src/app/metricscollector/linux.metrics-all-1.0-SNAPSHOT.jar
+nice -n 19 java -jar /usr/src/app/metricscollector/linux.metrics-all-1.0-SNAPSHOT.jar > /usr/src/app/metricscollector/metricsCollector.log 2>&1 &
+exec "$@"
